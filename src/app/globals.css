@@ -1,11 +1,13 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
+@theme inline { /* Keeping this from original src/app/globals.css */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -14,13 +16,75 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0a; /* Dark mode background from original src/app/globals.css */
+    --foreground: #ededed; /* Dark mode foreground from original src/app/globals.css */
   }
 }
 
+/* Flashcard app specific body styling - prioritized */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: sans-serif; /* Flashcard app font */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0; /* Flashcard app background, overrides var(--background) for body */
+  color: var(--foreground); /* Keep foreground color from theme */
+}
+
+/* Flashcard app specific main container styling */
+main {
+  max-width: 500px;
+  padding: 20px;
+  background-color: white; /* Specific for the flashcard box, not necessarily page background */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Flashcard app specific h1 styling */
+h1 {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Flashcard app specific definition area styling */
+.definition-area {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  min-height: 50px;
+}
+
+/* Flashcard app specific button base styling */
+button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Flashcard app specific button color classes (mimicking Tailwind) */
+.bg-blue-500 {
+  background-color: #3498db;
+}
+.bg-blue-500:hover {
+  background-color: #2980b9;
+}
+
+.bg-green-500 {
+  background-color: #2ecc71;
+}
+.bg-green-500:hover {
+  background-color: #27ae60;
 }
