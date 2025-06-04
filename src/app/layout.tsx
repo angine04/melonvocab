@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Inter,
+  Noto_Sans_SC,
+  Pacifico,
+} from "next/font/google";
 import "./globals.css";
+import AuthInitializer from "@/components/AuthInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,6 +17,28 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Configure Inter font
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+// Configure Noto Sans SC font
+const notoSansSC = Noto_Sans_SC({
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-noto-sans-sc",
+  display: "swap",
+});
+
+// Configure Pacifico font
+const pacifico = Pacifico({
+  subsets: ["latin"],
+  weight: ["400"], // Pacifico typically only has a 'normal' weight (400)
+  variable: "--font-pacifico",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -23,11 +52,42 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${notoSansSC.variable} ${pacifico.variable}`}
+    >
+      <head>
+        <link rel="preload" href="/images/home-bg.jpg" as="image" />
+      </head>
+      <body className={`antialiased bg-transition`}>
+        <div className="router-transition">{children}</div>
+        <AuthInitializer />
+        {/* Development helper - add resetStats function to window */}
+        {process.env.NODE_ENV === "development" && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.resetStats = async function() {
+                  try {
+                    const { StatsService } = await import('/src/services/statsService.ts');
+                    const { useAuthStore } = await import('/src/store/authStore.ts');
+                    const user = useAuthStore.getState().user;
+                    if (user) {
+                      const success = await StatsService.resetUserStats(user.id);
+                      console.log('Stats reset:', success ? 'Success' : 'Failed');
+                      window.location.reload();
+                    } else {
+                      console.log('No user logged in');
+                    }
+                  } catch (error) {
+                    console.error('Error resetting stats:', error);
+                  }
+                };
+                console.log('Development mode: Use resetStats() in console to fix inflated statistics');
+              `,
+            }}
+          />
+        )}
       </body>
     </html>
   );

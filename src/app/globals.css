@@ -8,8 +8,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-inter), var(--font-noto-sans-sc), sans-serif;
   --font-mono: var(--font-geist-mono);
+  --font-pacifico: var(--font-pacifico);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +21,134 @@
 }
 
 body {
-  background: var(--background);
+  background: transparent;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+/* For better visual consistency, ensure scrollable areas use the custom styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Page transition effects - 更自然的渐变效果 */
+.page-transition {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.page-enter {
+  opacity: 0;
+}
+
+.page-enter-active {
+  opacity: 1;
+}
+
+/* Router transition for smooth navigation */
+.router-transition {
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Prevent flash of unstyled content */
+html {
+  background: url("/images/home-bg.jpg") center center/cover no-repeat fixed;
+  background-color: rgb(15 23 42); /* 作为fallback */
+}
+
+/* Loading state improvements */
+.loading-fade {
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animate fade in utility class */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Delayed fade in for headers/logos to prevent flashing */
+.animate-fade-in-delayed {
+  animation: fadeIn 0.3s ease-in-out 0.2s both;
+}
+
+/* No animation for static elements like logo */
+.no-animation {
+  animation: none !important;
+}
+
+/* Smooth background transitions */
+.bg-transition {
+  transition: background-color 0.3s ease;
+}
+
+/* Page transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .page-transition {
+    opacity: 1;
+    transition: opacity 0.15s ease-out;
+  }
 }
