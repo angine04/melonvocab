@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { StatsService } from "@/services/statsService";
+import { SettingsService, UserSettings } from "@/services/settingsService";
 import {
   VocabularyService,
   VocabularyWord,
@@ -16,6 +17,7 @@ import {
 export default function ReviewPage() {
   const [reviewWords, setReviewWords] = useState<VocabularyWord[]>([]);
   const [isLoadingWords, setIsLoadingWords] = useState(true);
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [reviewedWords, setReviewedWords] = useState<string[]>([]);
@@ -60,6 +62,23 @@ export default function ReviewPage() {
       router.push("/login");
     }
   }, [user, isInitialized, router]);
+
+  // Load user settings
+  useEffect(() => {
+    const loadUserSettings = async () => {
+      if (!user?.id) return;
+
+      try {
+        const settings = await SettingsService.getUserSettings(user.id);
+        setUserSettings(settings);
+        console.log("Loaded user settings:", settings);
+      } catch (error) {
+        console.error("Error loading user settings:", error);
+      }
+    };
+
+    loadUserSettings();
+  }, [user?.id]);
 
   // Load review words when user is available
   useEffect(() => {
@@ -188,9 +207,6 @@ export default function ReviewPage() {
           quality={100}
           className="-z-10"
         />
-        <div className="text-center">
-          <div className="text-white text-xl">加载复习单词中...</div>
-        </div>
       </main>
     );
   }
@@ -417,11 +433,13 @@ export default function ReviewPage() {
               {currentWord.word}
             </h1>
             <div className="space-y-4">
-              <p className="text-xl text-white/80">
-                {currentWord.pronunciation?.us ||
-                  currentWord.pronunciation?.uk ||
-                  ""}
-              </p>
+              {userSettings?.showPronunciation && (
+                <p className="text-xl text-white/80">
+                  {currentWord.pronunciation?.us ||
+                    currentWord.pronunciation?.uk ||
+                    ""}
+                </p>
+              )}
               <p className="text-lg text-white/70">
                 {currentWord.meanings[0]?.partOfSpeech}
               </p>
@@ -439,7 +457,8 @@ export default function ReviewPage() {
                       ))}
                     </div>
                   </div>
-                  {currentWord.meanings[0]?.examples &&
+                  {userSettings?.showExamples &&
+                    currentWord.meanings[0]?.examples &&
                     currentWord.meanings[0].examples.length > 0 && (
                       <div>
                         <h3 className="text-lg font-medium text-white mb-2">

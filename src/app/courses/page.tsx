@@ -126,9 +126,6 @@ export default function CoursesPage() {
           quality={100}
           className="-z-10"
         />
-        <div className="text-center">
-          <div className="text-white">加载词库中...</div>
-        </div>
       </main>
     );
   }

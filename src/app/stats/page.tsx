@@ -89,9 +89,6 @@ export default function StatsPage() {
           quality={100}
           className="-z-10"
         />
-        <div className="text-center">
-          <div className="text-white">加载统计数据中...</div>
-        </div>
       </main>
     );
   }
