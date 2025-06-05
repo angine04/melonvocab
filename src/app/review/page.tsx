@@ -238,6 +238,9 @@ export default function ReviewPage() {
               <Button variant="default" onClick={() => router.push("/courses")}>
                 选择词书
               </Button>
+              <Button variant="default" onClick={() => router.push("/home")}>
+                返回首页
+              </Button>
             </div>
           </Card>
         </div>
