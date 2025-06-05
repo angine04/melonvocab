@@ -17,6 +17,7 @@ import {
 export default function ReviewPage() {
   const [reviewWords, setReviewWords] = useState<VocabularyWord[]>([]);
   const [isLoadingWords, setIsLoadingWords] = useState(true);
+  const [loadingError, setLoadingError] = useState<string | null>(null);
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -83,9 +84,14 @@ export default function ReviewPage() {
   // Load review words when user is available
   useEffect(() => {
     const loadReviewWords = async () => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        console.log("No user ID available for loading review words");
+        return;
+      }
 
+      console.log("Starting to load review words for user:", user.id);
       setIsLoadingWords(true);
+      setLoadingError(null);
       try {
         const words = await VocabularyService.getReviewWordsFromCurrentBook(
           user.id,
@@ -94,14 +100,18 @@ export default function ReviewPage() {
         console.log("Loaded review words:", words);
 
         if (words.length === 0) {
+          console.log("No words to review - setting review complete");
           // No words to review
           setIsReviewComplete(true);
         } else {
+          console.log(`Setting ${words.length} review words`);
           setReviewWords(words);
         }
       } catch (error) {
         console.error("Error loading review words:", error);
+        setLoadingError("加载复习单词时出错，请稍后重试");
       } finally {
+        console.log("Finished loading review words - setting loading to false");
         setIsLoadingWords(false);
       }
     };
@@ -207,12 +217,49 @@ export default function ReviewPage() {
           quality={100}
           className="-z-10"
         />
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-xl text-white">正在加载复习单词...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Show error if loading failed
+  if (loadingError) {
+    return (
+      <main className="relative flex min-h-screen flex-col items-center justify-center p-8 text-white">
+        <Image
+          src="/images/home-bg.jpg"
+          alt="Background"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+          className="-z-10"
+        />
+        <div className="w-full max-w-2xl mx-auto animate-fade-in">
+          <Card variant="stats" className="text-center">
+            <h1 className="text-3xl font-bold text-white mb-6">加载失败</h1>
+            <p className="text-white/70 text-lg mb-8">{loadingError}</p>
+            <div className="flex gap-4 justify-center">
+              <Button
+                variant="primary"
+                onClick={() => window.location.reload()}
+              >
+                重新加载
+              </Button>
+              <Button variant="default" onClick={() => router.push("/home")}>
+                返回首页
+              </Button>
+            </div>
+          </Card>
+        </div>
       </main>
     );
   }
 
   // Check if we have words to review
-  if (reviewWords.length === 0) {
+  if (reviewWords.length === 0 && !isLoadingWords) {
     return (
       <main className="relative flex min-h-screen flex-col items-center justify-center p-8 text-white">
         <Image
